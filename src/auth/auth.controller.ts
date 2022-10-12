@@ -9,7 +9,7 @@ import {
   Req,
   Res,
   UseInterceptors,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
@@ -24,7 +24,7 @@ import { AuthGuard } from './auth.guard';
 export class AuthController {
   constructor(
     private userService: UserService,
-    private jwtService: JwtService  
+    private jwtService: JwtService,
   ) {}
 
   @Post('register')
@@ -38,16 +38,17 @@ export class AuthController {
       last_name: body.last_name,
       email: body.email,
       password: hashed,
+      role: { id: 1 },
     });
   }
 
   @Post('login')
   async login(
     @Body() body: LoginDto,
-    @Res({passthrough: true}) response: Response
+    @Res({ passthrough: true }) response: Response,
   ) {
     const user = await this.userService.findOneByEmail(body.email);
-    
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -56,9 +57,9 @@ export class AuthController {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const jwt = await this.jwtService.signAsync({id: user.id});
+    const jwt = await this.jwtService.signAsync({ id: user.id });
 
-    response.cookie('jwt', jwt, {httpOnly: true});
+    response.cookie('jwt', jwt, { httpOnly: true });
 
     return user;
   }
@@ -75,11 +76,11 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Post('logout')
-  async logout(@Res({passthrough: true}) response: Response) {
+  async logout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('jwt');
 
     return {
-      message: 'Success'
-    }
+      message: 'Success',
+    };
   }
 }

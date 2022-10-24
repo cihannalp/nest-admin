@@ -37,7 +37,7 @@ export class UserController {
     return await this.userService.paginate(page, ['role']);
   }
 
-  @HasPermission('users')
+  @HasPermission('edit_users')
   @Post('create')
   async create(@Body() body): Promise<User> {
     const password = await bcrypt.hash('1234', 12);
@@ -53,7 +53,7 @@ export class UserController {
   async get(@Param('id') id: number) {
     return this.userService.findOneById(id, ['role']);
   }
-  @HasPermission('users')
+  @HasPermission('edit_users')
   @Put(':id')
   async update(@Param('id') id: number, @Body() body: UserUpdateDto) {
     const { role_id, ...data } = body;

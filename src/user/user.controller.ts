@@ -93,7 +93,8 @@ export class UserController {
 
     return this.userService.findOneById(id);
   }
-  @HasPermission('users')
+
+  @HasPermission('edit_users')
   @Delete(':id')
   async delete(@Param('id') id: number) {
     return await this.userService.delete(id);
